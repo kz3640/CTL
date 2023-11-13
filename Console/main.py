@@ -70,6 +70,7 @@ def play(mode, url):
         songs_array = playlist_json['items']
         for x in songs_array:
             print(x['track']['name'])
+        #TODO EITHER CONNECT MUSIXMATCH (PAID API) OR WEBSCRAPE FROM A SITE
 
         mode = mode.lower()
         return States.FREEINPUT  # TODO ACTUALLY IMPLEMENT THIS, THIS IS PLACEHOLDER
