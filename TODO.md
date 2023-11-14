@@ -26,5 +26,5 @@ Things that still need to be done.
 
 ### Done ✓
 
-- [x] Implement linking with the spotify API to pull songs from a playlist
-- [x] Trim the json data for storage efficiency
+- [x] Implement linking with the spotify API to pull songs from a playlist  (11/13/23)
+- [x] Trim the json data for storage efficiency   (11/14/23)
