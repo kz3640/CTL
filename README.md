@@ -1,6 +1,6 @@
 # CTL
 
-CTL is a Console application written in Python that allows users to play complete the lyrics.
+CTL is a Console application written in Python that allows users to play complete the lyrics. This project is unfinished.
 
 ## Build and Run
 
