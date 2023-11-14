@@ -3,6 +3,7 @@ import requests
 import datetime
 from states import States
 from gamemodes import Gamemodes
+from bs4 import BeautifulSoup
 
 auth_url = 'https://accounts.spotify.com/api/token'
 client_id = None
@@ -46,8 +47,8 @@ def update_headers():
 
 
 def fetch_id(playlist_id):
-    #fetches json data from spotify api
-    url = "https://api.spotify.com/v1/playlists/"+str(playlist_id)+"/tracks?offset=0&limit=100"
+    # fetches json data from spotify api
+    url = "https://api.spotify.com/v1/playlists/" + str(playlist_id) + "/tracks?offset=0&limit=100"
     response = requests.get(url, headers=playlist_headers)
 
     if response.status_code == 200:
@@ -55,6 +56,46 @@ def fetch_id(playlist_id):
     else:
         print('Error:', response.status_code, response.text)
         return None
+
+
+def validLyrics(page):
+    soup = BeautifulSoup(page.content, "html.parser")
+    if str(soup.title) == "<title>AZLyrics - Song Lyrics from A to Z</title>":
+        return False
+    return True
+
+
+def cleanLyrics(dirty_lyrics):
+    dirty_lyrics = dirty_lyrics.replace("<br>", "")
+    dirty_lyrics = dirty_lyrics.replace("\\r", "")
+    dirty_lyrics = dirty_lyrics.replace("\\'", "'")
+    dirty_lyrics = dirty_lyrics.replace("\\n", "\n")
+    dirty_lyrics = dirty_lyrics.replace("</div>", "")
+    return dirty_lyrics
+
+
+def parseLyrics(page):
+    header = "<!-- Usage of azlyrics.com content by any third-party lyrics provider is prohibited by our licensing agreement. Sorry about that. -->"
+    footer = "<!-- MxM banner -->"
+    content = str(page.content)
+    start_index = content.find(header) + len(header)
+    end_index = content.find(footer, start_index)
+    dirty_lyrics = content[start_index:end_index]
+    clean_lyrics = cleanLyrics(dirty_lyrics)
+    return clean_lyrics
+
+
+def scrape(idx, name, artist):
+    parsedname = name.replace(" ", "").lower()
+    parsedartist = artist.replace(" ", "").lower()
+    url = "https://www.azlyrics.com/lyrics/" + parsedartist + "/" + parsedname + ".html"
+    page = requests.get(url)
+    if (validLyrics(page)):
+        playlist_json['items'][idx]['track']['validlyrics'] = True
+        playlist_json['items'][idx]['track']['lyrics'] = parseLyrics(page)
+    else:
+        playlist_json['items'][idx]['track']['validlyrics'] = False
+        playlist_json['items'][idx]['track']['lyrics'] = ""
 
 
 def play(mode, url):
@@ -88,10 +129,9 @@ def play(mode, url):
         playlist_json = filtered_data
 
         songs_array = playlist_json['items']
-        for x in songs_array:
-            print(x['track']['name'] +" - "+ x['track']['artists'][0]['name'])
-        #TODO EITHER CONNECT MUSIXMATCH (PAID API) OR WEBSCRAPE FROM A SITE, PROBABLY SCRAPE
-        #THINKING ABOUT SCRAPING FROM AZLYRICS.COM
+        for i in range(len(songs_array)):
+            print(songs_array[i]['track']['name'] + " - " + songs_array[i]['track']['artists'][0]['name'])
+            scrape(i, songs_array[i]['track']['name'], songs_array[i]['track']['artists'][0]['name'])
 
         mode = mode.lower()
         return States.FREEINPUT  # TODO ACTUALLY IMPLEMENT THIS, THIS IS PLACEHOLDER
