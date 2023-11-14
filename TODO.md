@@ -21,11 +21,10 @@ Things that still need to be done.
 
 ### In Progress
 
-- [ ] Figure out a way to get lyrics for songs
-  - [ ] API
-  - [ ] 3rd Party
-
 ### Done ✓
 
+- [x] Figure out a way to get lyrics for songs
+  - [ ] API
+  - [x] 3rd Party
 - [x] Implement linking with the spotify API to pull songs from a playlist  (11/13/23)
 - [x] Trim the json data for storage efficiency   (11/14/23)
