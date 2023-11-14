@@ -22,3 +22,7 @@ Your client id and secret id should be placed in a text file named "secrets" in 
 client-id-here
 secret-id-here
 ```
+
+## Progress
+
+Check out the [TODO](https://github.com/kz3640/CTL/blob/main/TODO.md)
