@@ -64,8 +64,28 @@ def play(mode, url):
     playlist_data = fetch_id(playlist_id)
 
     if playlist_data:
+        filtered_data = {
+            "items": [
+                {
+                    "track": {
+                        "artists": item['track']['artists'],
+                        "explicit": item['track']['explicit'],
+                        "external_ids": item['track']['external_ids'],
+                        "id": item['track']['id'],
+                        "name": item['track']['name']
+                    }
+                }
+                for item in playlist_data['items']
+            ],
+            "limit": playlist_data['limit'],
+            "next": playlist_data['next'],
+            "offset": playlist_data['offset'],
+            "previous": playlist_data['previous'],
+            "next": playlist_data['next']
+        }
+
         global playlist_json
-        playlist_json = playlist_data
+        playlist_json = filtered_data
 
         songs_array = playlist_json['items']
         for x in songs_array:
