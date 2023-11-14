@@ -47,7 +47,7 @@ def update_headers():
 
 def fetch_id(playlist_id):
     #fetches json data from spotify api
-    url = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?offset=0&limit=100"
+    url = "https://api.spotify.com/v1/playlists/"+str(playlist_id)+"/tracks?offset=0&limit=100"
     response = requests.get(url, headers=playlist_headers)
 
     if response.status_code == 200:
@@ -69,8 +69,9 @@ def play(mode, url):
 
         songs_array = playlist_json['items']
         for x in songs_array:
-            print(x['track']['name'])
+            print(x['track']['name'] +" - "+ x['track']['artists'][0]['name'])
         #TODO EITHER CONNECT MUSIXMATCH (PAID API) OR WEBSCRAPE FROM A SITE, PROBABLY SCRAPE
+        #THINKING ABOUT SCRAPING FROM AZLYRICS.COM
 
         mode = mode.lower()
         return States.FREEINPUT  # TODO ACTUALLY IMPLEMENT THIS, THIS IS PLACEHOLDER
