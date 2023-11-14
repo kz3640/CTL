@@ -11,6 +11,9 @@ token = None
 genTime = None
 playlist_json = None
 
+#id's wanted
+wanted = ['artists', 'external_ids', 'id', 'name']
+
 
 # Load secrets
 def load_secrets():
@@ -47,7 +50,7 @@ def update_headers():
 
 def fetch_id(playlist_id):
     #fetches json data from spotify api
-    url = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?offset=0&limit=100"
+    url = "https://api.spotify.com/v1/playlists/"+str(playlist_id)+"/tracks?offset=0&limit=100"
     response = requests.get(url, headers=playlist_headers)
 
     if response.status_code == 200:
@@ -64,6 +67,8 @@ def play(mode, url):
     playlist_data = fetch_id(playlist_id)
 
     if playlist_data:
+        #CLEAN JSON
+
         global playlist_json
         playlist_json = playlist_data
 
@@ -114,6 +119,16 @@ def handle_free_input(user_input):
 def handle_settings_menu():
     # Add logic for handling settings menu
     return
+
+def getSong(spotify_song_id):
+    # Should return a song object, keep this object stored in memory
+    return None
+
+def getPlaylist(playlist_json):
+    songs_array = playlist_json['items']
+    for x in songs_array:
+        getSong(x['track']['id'])
+
 
 
 def main():
