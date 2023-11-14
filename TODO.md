@@ -4,9 +4,6 @@ Things that still need to be done.
 
 ### Todo
 
-- [ ] Figure out a way to get lyrics for songs
-  - [ ] API
-  - [ ] 3rd Party
 
 - [ ] Figure out a way to store lyrics for songs
   - [ ] SQL database for default songs
@@ -23,6 +20,10 @@ Things that still need to be done.
 - [ ] Reorganize and Refactor code (finish when everything works)
 
 ### In Progress
+
+- [ ] Figure out a way to get lyrics for songs
+  - [ ] API
+  - [ ] 3rd Party
 
 ### Done ✓
 
