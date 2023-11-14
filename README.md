@@ -26,3 +26,8 @@ secret-id-here
 ## Progress
 
 Check out the [TODO](https://github.com/kz3640/CTL/blob/main/TODO.md).
+
+
+## Issues
+
+AZlyrics.com is not viable, blocks users after accessing site many times.
