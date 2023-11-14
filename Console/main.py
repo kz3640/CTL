@@ -11,9 +11,6 @@ token = None
 genTime = None
 playlist_json = None
 
-#id's wanted
-wanted = ['artists', 'external_ids', 'id', 'name']
-
 
 # Load secrets
 def load_secrets():
@@ -67,10 +64,28 @@ def play(mode, url):
     playlist_data = fetch_id(playlist_id)
 
     if playlist_data:
-        #CLEAN JSON
+        filtered_data = {
+            "items": [
+                {
+                    "track": {
+                        "artists": item['track']['artists'],
+                        "explicit": item['track']['explicit'],
+                        "external_ids": item['track']['external_ids'],
+                        "id": item['track']['id'],
+                        "name": item['track']['name']
+                    }
+                }
+                for item in playlist_data['items']
+            ],
+            "limit": playlist_data['limit'],
+            "next": playlist_data['next'],
+            "offset": playlist_data['offset'],
+            "previous": playlist_data['previous'],
+            "next": playlist_data['next']
+        }
 
         global playlist_json
-        playlist_json = playlist_data
+        playlist_json = filtered_data
 
         songs_array = playlist_json['items']
         for x in songs_array:
@@ -119,16 +134,6 @@ def handle_free_input(user_input):
 def handle_settings_menu():
     # Add logic for handling settings menu
     return
-
-def getSong(spotify_song_id):
-    # Should return a song object, keep this object stored in memory
-    return None
-
-def getPlaylist(playlist_json):
-    songs_array = playlist_json['items']
-    for x in songs_array:
-        getSong(x['track']['id'])
-
 
 
 def main():
