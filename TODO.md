@@ -21,10 +21,11 @@ Things that still need to be done.
 
 ### In Progress
 
-### Done ✓
-
 - [x] Figure out a way to get lyrics for songs
   - [ ] API
-  - [x] 3rd Party
+  - [x] 3rd Party (AZLyrics)
+  - [ ] Use Genius API, AZlyrics doesn't allow
+
+### Done ✓
 - [x] Implement linking with the spotify API to pull songs from a playlist  (11/13/23)
 - [x] Trim the json data for storage efficiency   (11/14/23)
