@@ -11,6 +11,11 @@ Things that still need to be done.
 
 - [ ] Write test cases for methods
 
+- [ ] Settings menu
+  - [ ] Change number of plays for total gamemode
+  - [ ] Save scores
+  - [ ] Login (website)
+
 - [ ] Reorganize and Refactor code (finish when everything works)
 
 ### In Progress
