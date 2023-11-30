@@ -1,3 +1,5 @@
+<!--<img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green" /><img src="https://img.shields.io/badge/Spotify-1ED760?&style=for-the-badge&logo=spotify&logoColor=white" />-->
+
 # CTL
 
 CTL is a Console application written in Python that allows users to play complete the lyrics. This project is unfinished.
