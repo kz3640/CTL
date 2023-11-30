@@ -14,13 +14,16 @@ python3 main.py
 
 ## API Keys
 
-This project requires the use of the [Spotify API](https://developer.spotify.com/documentation/web-api/tutorials/getting-started).
+This project requires the use of the [Spotify API](https://developer.spotify.com/documentation/web-api/tutorials/getting-started), and the [Genius API](https://docs.genius.com/).
 
-Your client id and secret id should be placed in a text file named "secrets" in the Console directory and formatted as follows.
+Your client id's and secret id's should be placed in a text file named "secrets" in the Console directory and formatted as follows. Currently the Genius Token also needs to be manually placed.
 
 ```bash
-client-id-here
-secret-id-here
+spotify-client-id-here
+spotify-secret-id-here
+genius-client-id-here
+genius-secret-id-here
+genius-token
 ```
 
 ## Progress
