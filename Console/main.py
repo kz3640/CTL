@@ -3,7 +3,8 @@ import requests
 import datetime
 from states import States
 from gamemodes import Gamemodes
-from bs4 import BeautifulSoup
+import random
+import string
 
 from lyricsgenius import Genius
 
@@ -57,11 +58,7 @@ def generate_spotify_token():
         print('Error:', auth_response.status_code, auth_response.text)
 
 
-# generate a genius token and save it under genius_token
-def generate_genius_token():
-    return
-
-
+# noinspection PyTypeChecker
 def update_headers():
     global playlist_headers
     playlist_headers = {
@@ -80,21 +77,21 @@ def fetch_id(playlist_id):
         print('Error:', response.status_code, response.text)
         return None
 
-def getLyrics(idx, name, artist):
+
+def get_lyrics(idx, name, artist):
     parsed_name = name.lower()
     parsed_artist = artist.lower()
     song = genius.search_song(title=parsed_name, artist=parsed_artist)
-    if song != None:
+    if song is not None:
         playlist_json['items'][idx]['track']['validlyrics'] = True
-        playlist_json['items'][idx]['track']['lyrics'] = song.lyrics
+        # removing the first and last line. The lines contain remnants from parsing in the library used.
+        playlist_json['items'][idx]['track']['lyrics'] = '\n'.join(song.lyrics.replace('\n\n', '\n').split('\n')[1:-1])
     else:
         playlist_json['items'][idx]['track']['validlyrics'] = False
         playlist_json['items'][idx]['track']['lyrics'] = ""
 
 
-
-
-def play(mode, url):
+def play(mode, url, times=10):
     last_slash_index = url.rfind("/")
     playlist_id = url[last_slash_index + 1: url.find("?", last_slash_index)]
 
@@ -126,17 +123,56 @@ def play(mode, url):
 
         songs_array = playlist_json['items']
         for i in range(len(songs_array)):
-            print(songs_array[i]['track']['name'] + " - " + songs_array[i]['track']['artists'][0]['name'])
-            getLyrics(i, songs_array[i]['track']['name'], songs_array[i]['track']['artists'][0]['name'])
-            print(playlist_json['items'][i]['track']['lyrics'])
+            # print(songs_array[i]['track']['name'] + " - " + songs_array[i]['track']['artists'][0]['name'])
+            # print(playlist_json['items'][i]['track']['lyrics'])
+            get_lyrics(i, songs_array[i]['track']['name'], songs_array[i]['track']['artists'][0]['name'])
 
         mode = mode.lower()
-        return States.FREEINPUT  # TODO ACTUALLY IMPLEMENT THIS, THIS IS PLACEHOLDER
         if mode == "ctl":
-            return Gamemodes.CTL
+            return play_ctl(times)
     else:
         # Handle the case where fetching playlist data fails
         return States.FREEINPUT
+
+
+def random_lyric():
+    size_playlist = len(playlist_json['items'])
+    valid = False
+    num = None
+    while not valid:
+        num = random.randint(0, size_playlist-1)
+        valid = playlist_json['items'][num]['track']['validlyrics']
+    lyrics = playlist_json['items'][num]['track']['lyrics']
+    return random.choice(lyrics.split('\n')).strip('\n')
+
+
+def correct_answer(full_lyric, user_input):
+    # Remove punctuation and convert to lowercase
+    full_lyric_processed = full_lyric.translate(str.maketrans('', '', string.punctuation)).lower()
+    user_input_processed = user_input.translate(str.maketrans('', '', string.punctuation)).lower()
+
+    # Split the processed lyric into words
+    words = full_lyric_processed.split()
+
+    # Check if the user input matches the last word
+    return user_input_processed == words[-1]
+
+
+def play_ctl(times):
+    count = 0
+    correct = 0
+    while count < times:
+        count += 1
+        full_lyric = random_lyric()
+        user_input = input(' '.join(full_lyric.split()[:-1])+' ')
+        if correct_answer(full_lyric, user_input):
+            print("Correct!")
+            correct += 1
+        else:
+            print("Incorrect. The correct answer was")
+            print(full_lyric)
+    print("You got " + str(correct) + " right out of " + str(times) + ".")
+    return States.FREEINPUT
 
 
 def handle_free_input(user_input):
@@ -165,12 +201,12 @@ def handle_free_input(user_input):
 
     else:
         print("Invalid command. Type !help for assistance.")
-
-    return
+    return States.FREEINPUT
 
 
 def handle_settings_menu():
     # Add logic for handling settings menu
+    # TODO
     return
 
 
