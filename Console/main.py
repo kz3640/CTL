@@ -5,44 +5,67 @@ from states import States
 from gamemodes import Gamemodes
 from bs4 import BeautifulSoup
 
-auth_url = 'https://accounts.spotify.com/api/token'
-client_id = None
-client_secret = None
-token = None
+from lyricsgenius import Genius
+
+# spotify api stuff
+spotify_auth_url = 'https://accounts.spotify.com/api/token'
+spotify_client_id = None
+spotify_client_secret = None
+spotify_token = None
+
+# genius api stuff
+genius_auth_url = 'https://api.genius.com/oauth/authorize'
+genius_client_id = None
+genius_client_secret = None
+genius_token = None
+genius = None
+
+# might be useful? not sure
 genTime = None
+# spotify playlist as a json
 playlist_json = None
 
 
 # Load secrets
 def load_secrets():
-    global client_id, client_secret
+    global spotify_client_id, spotify_client_secret, genius_client_id, genius_client_secret, genius_token, genius
     with open('secrets') as f:
-        client_id = f.readline().strip()
-        client_secret = f.readline().strip()
+        spotify_client_id = f.readline().strip()
+        spotify_client_secret = f.readline().strip()
+        genius_client_id = f.readline().strip()
+        genius_client_secret = f.readline().strip()
+        genius_token = f.readline().strip()
+    genius = Genius(access_token=genius_token, remove_section_headers=True)
 
 
-def generate_token():
+# generate a spotify token and save it under spotify_token
+def generate_spotify_token():
     auth_headers = {
-        'Authorization': 'Basic ' + base64.b64encode((client_id + ':' + client_secret).encode('utf-8')).decode('utf-8')
+        'Authorization': 'Basic ' + base64.b64encode((spotify_client_id + ':' + spotify_client_secret).encode('utf-8')).decode('utf-8')
     }
     auth_data = {
         'grant_type': 'client_credentials'
     }
-    auth_response = requests.post(auth_url, headers=auth_headers, data=auth_data)
+    auth_response = requests.post(spotify_auth_url, headers=auth_headers, data=auth_data)
 
     if auth_response.status_code == 200:
-        global token, genTime
-        token = auth_response.json().get('access_token')
+        global spotify_token, genTime
+        spotify_token = auth_response.json().get('access_token')
         genTime = datetime.datetime.now()
         update_headers()
     else:
         print('Error:', auth_response.status_code, auth_response.text)
 
 
+# generate a genius token and save it under genius_token
+def generate_genius_token():
+    return
+
+
 def update_headers():
     global playlist_headers
     playlist_headers = {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + spotify_token
     }
 
 
@@ -57,45 +80,18 @@ def fetch_id(playlist_id):
         print('Error:', response.status_code, response.text)
         return None
 
-
-def validLyrics(page):
-    soup = BeautifulSoup(page.content, "html.parser")
-    if str(soup.title) == "<title>AZLyrics - Song Lyrics from A to Z</title>":
-        return False
-    return True
-
-
-def cleanLyrics(dirty_lyrics):
-    dirty_lyrics = dirty_lyrics.replace("<br>", "")
-    dirty_lyrics = dirty_lyrics.replace("\\r", "")
-    dirty_lyrics = dirty_lyrics.replace("\\'", "'")
-    dirty_lyrics = dirty_lyrics.replace("\\n", "\n")
-    dirty_lyrics = dirty_lyrics.replace("</div>", "")
-    return dirty_lyrics
-
-
-def parseLyrics(page):
-    header = "<!-- Usage of azlyrics.com content by any third-party lyrics provider is prohibited by our licensing agreement. Sorry about that. -->"
-    footer = "<!-- MxM banner -->"
-    content = str(page.content)
-    start_index = content.find(header) + len(header)
-    end_index = content.find(footer, start_index)
-    dirty_lyrics = content[start_index:end_index]
-    clean_lyrics = cleanLyrics(dirty_lyrics)
-    return clean_lyrics
-
-
-def scrape(idx, name, artist):
-    parsedname = name.replace(" ", "").lower()
-    parsedartist = artist.replace(" ", "").lower()
-    url = "https://www.azlyrics.com/lyrics/" + parsedartist + "/" + parsedname + ".html"
-    page = requests.get(url)
-    if (validLyrics(page)):
+def getLyrics(idx, name, artist):
+    parsed_name = name.replace(" ", "").lower()
+    parsed_artist = artist.replace(" ", "").lower()
+    song = genius.search_song(title=parsed_name, artist=parsed_artist)
+    if song != None:
         playlist_json['items'][idx]['track']['validlyrics'] = True
-        playlist_json['items'][idx]['track']['lyrics'] = parseLyrics(page)
+        playlist_json['items'][idx]['track']['lyrics'] = song.lyrics
     else:
         playlist_json['items'][idx]['track']['validlyrics'] = False
         playlist_json['items'][idx]['track']['lyrics'] = ""
+
+
 
 
 def play(mode, url):
@@ -131,7 +127,8 @@ def play(mode, url):
         songs_array = playlist_json['items']
         for i in range(len(songs_array)):
             print(songs_array[i]['track']['name'] + " - " + songs_array[i]['track']['artists'][0]['name'])
-            scrape(i, songs_array[i]['track']['name'], songs_array[i]['track']['artists'][0]['name'])
+            getLyrics(i, songs_array[i]['track']['name'], songs_array[i]['track']['artists'][0]['name'])
+            print(playlist_json['items'][i]['track']['lyrics'])
 
         mode = mode.lower()
         return States.FREEINPUT  # TODO ACTUALLY IMPLEMENT THIS, THIS IS PLACEHOLDER
@@ -179,7 +176,7 @@ def handle_settings_menu():
 
 def main():
     load_secrets()
-    generate_token()
+    generate_spotify_token()
     current_state = States.FREEINPUT
 
     while current_state != States.QUIT:
