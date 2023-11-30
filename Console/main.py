@@ -158,7 +158,7 @@ def correct_answer(full_lyric, user_input):
     return user_input_processed == words[-1]
 
 
-def play_ctl(times):
+def play_ctl(times=10):
     count = 0
     correct = 0
     while count < times:
@@ -199,6 +199,12 @@ def handle_free_input(user_input):
         play_response = play(mode, url)
         return play_response
 
+    elif user_input_lower == "!replay ctl":
+        if playlist_json is None:
+            print("No playlist loaded.")
+            return States.FREEINPUT
+        return play_ctl()
+
     else:
         print("Invalid command. Type !help for assistance.")
     return States.FREEINPUT
@@ -217,7 +223,7 @@ def main():
 
     while current_state != States.QUIT:
         if current_state == States.FREEINPUT:
-            current_state = handle_free_input(input("Enter a command."))
+            current_state = handle_free_input(input("Enter a command.\n"))
 
 
 if __name__ == "__main__":
