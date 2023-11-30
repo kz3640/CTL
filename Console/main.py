@@ -81,8 +81,8 @@ def fetch_id(playlist_id):
         return None
 
 def getLyrics(idx, name, artist):
-    parsed_name = name.replace(" ", "").lower()
-    parsed_artist = artist.replace(" ", "").lower()
+    parsed_name = name.lower()
+    parsed_artist = artist.lower()
     song = genius.search_song(title=parsed_name, artist=parsed_artist)
     if song != None:
         playlist_json['items'][idx]['track']['validlyrics'] = True
