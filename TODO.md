@@ -25,6 +25,11 @@ Things that still need to be done.
   - [ ] Timed Gamemode
   - [ ] Save Scores for Ghost Gamplay
   - [ ] Ai for generative multiple choice
+     
+- [ ] Write the site
+  - [ ] Create a landing page
+  - [ ] Add functionality for gamemodes
+  - [ ] Html/css for site, think monkeytype 
 
 ### Done ✓
 - [x] Implement linking with the spotify API to pull songs from a playlist  (11/13/23)
