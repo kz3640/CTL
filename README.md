@@ -14,6 +14,12 @@ To build and run the program, change to the src/Console directory and execute th
 python3 main.py
 ```
 
+After the program is running, you can start a game by typing the following:
+
+```bash
+!play CTL spotify-playlist-link
+```
+
 ## API Keys
 
 This project requires the use of the [Spotify API](https://developer.spotify.com/documentation/web-api/tutorials/getting-started), and the [Genius API](https://docs.genius.com/).
