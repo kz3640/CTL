@@ -17,7 +17,7 @@ if __name__ == "__main__":
     text = list(text_df.lyrics.values)
     joined_text = " ".join(text)
 
-    partial_text = joined_text[:10000]
+    partial_text = joined_text[:1000000]
 
     tokenizer = RegexpTokenizer(r"\w+")
     tokens = tokenizer.tokenize(partial_text.lower())
@@ -48,12 +48,27 @@ if __name__ == "__main__":
             X[i, j, unique_token_index[word]] = 1
         Y[i, unique_token_index[next_words[i]]] = 1
 
-    print("training")
+    print("setting model parameters")
 
     model = Sequential()
     model.add(LSTM(128, input_shape=(n_words, len(unique_tokens)), return_sequences = True))
     model.add(LSTM(128))
     model.add(Dense(len(unique_tokens)))
     model.add(Activation("softmax"))
+
+    print("fitting the model")
+
     model.compile(loss="categorical_crossentropy", optimizer=RMSprop(learning_rate=0.01), metrics=["accuracy"])
     model.fit(X,Y, batch_size=128, epochs=10, shuffle=True)
+
+    model.save("Models/mymodel1M.h5")
+
+
+def predict_next_word(input_text, n_best):
+    input_text = input_text.lower()
+    X = np.zeros((1, n_words, len(unique_tokens)))
+    for i, word in enumerate(input_text.split()):
+        X[0, i, unique_token_index[word]] = 1
+
+    predictions = model.predict(X)[0]
+    return np.argpartition(predictions, -n_best)[-n_best:]

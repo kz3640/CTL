@@ -2,7 +2,7 @@ import pandas as pd
 
 if __name__ == "__main__":
     # Read the large CSV file
-    large_dataset = pd.read_csv('all_song_lyrics.csv')
+    large_dataset = pd.read_csv('song_lyrics.csv')
 
     # Define the main genres
     main_genres = ['pop', 'rap', 'rock', 'rb', 'country']
