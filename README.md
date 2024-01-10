@@ -34,6 +34,10 @@ genius-secret-id-here
 genius-token
 ```
 
+## Training Data
+
+Training data for the LLM should be placed in a .csv file with values as the header of lyrics.
+
 ## Progress
 
 Check out the [TODO](https://github.com/kz3640/CTL/blob/main/TODO.md).
