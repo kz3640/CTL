@@ -61,7 +61,11 @@ if __name__ == "__main__":
     model.compile(loss="categorical_crossentropy", optimizer=RMSprop(learning_rate=0.01), metrics=["accuracy"])
     model.fit(X,Y, batch_size=128, epochs=10, shuffle=True)
 
-    model.save("Models/mymodel1M.h5")
+    model.save("Models/mymodel1M-2.h5")
+    with open('unique_tokens.pkl', 'wb') as file:
+        pickle.dump(unique_tokens, file)
+    with open('unique_token_index.pkl', 'wb') as file:
+        pickle.dump(unique_token_index, file)
 
 
 def predict_next_word(input_text, n_best):
