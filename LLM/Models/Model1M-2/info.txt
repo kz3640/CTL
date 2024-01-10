@@ -1,0 +1,4 @@
+n_words = 10
+epochs = 30
+learning rate = 0.008
+loss = categorical_crossentropy
